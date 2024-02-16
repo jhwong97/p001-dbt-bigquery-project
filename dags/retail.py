@@ -5,6 +5,10 @@ from datetime import datetime
 from airflow.operators.python_operator import PythonOperator
 from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesystemToGCSOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryCreateEmptyDatasetOperator
+from include.dbt.cosmos_config import DBT_PROJECT_CONFIG, DBT_CONFIG
+from cosmos.airflow.task_group import DbtTaskGroup
+from cosmos.constants import LoadMode
+from cosmos.config import ProjectConfig, RenderConfig
 from astro import sql as aql
 from astro.files import File
 from astro.sql.table import Table, Metadata
@@ -55,6 +59,16 @@ def retail():
     check_load_task = PythonOperator(
         task_id='check_load',
         python_callable = check_load,
+    )
+    
+    transform = DbtTaskGroup(
+        group_id='transform',
+        project_config=DBT_PROJECT_CONFIG,
+        profile_config=DBT_CONFIG,
+        render_config=RenderConfig(
+            load_method=LoadMode.DBT_LS,
+            select=['path:models/transforms']
+        )
     )
     
 retail()
