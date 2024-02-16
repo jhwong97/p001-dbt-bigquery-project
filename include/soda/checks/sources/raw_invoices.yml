@@ -4,7 +4,7 @@ checks for raw_invoices:
         when required column missing: [InvoiceNo, StockCode, Description, Quantity, InvoiceDate, UnitPrice, CustomerID, Country]
         when wrong column type:
           InvoiceNo: string
-          StockCode: integer
+          StockCode: string
           Description: string
           Quantity: integer
           InvoiceDate: string
