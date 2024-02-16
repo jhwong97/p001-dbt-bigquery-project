@@ -2,6 +2,7 @@
 from airflow.decorators import dag, task
 from datetime import datetime
 
+from airflow.operators.python_operator import PythonOperator
 from airflow.providers.google.cloud.transfers.local_to_gcs import LocalFilesystemToGCSOperator
 from airflow.providers.google.cloud.operators.bigquery import BigQueryCreateEmptyDatasetOperator
 from astro import sql as aql
@@ -9,6 +10,9 @@ from astro.files import File
 from astro.sql.table import Table, Metadata
 from astro.constants import FileType
 
+def check_load(scan_name='check_load', checks_subpath='sources'):
+    from include.soda.check_function import check
+    return check(scan_name, checks_subpath)
 
 @dag(
     start_date=datetime(2023, 1, 1),
@@ -46,6 +50,11 @@ def retail():
             metadata=Metadata(schema='retail')
         ),
         use_native_support=False,
+    )
+    
+    check_load_task = PythonOperator(
+        task_id='check_load',
+        python_callable = check_load,
     )
     
 retail()
