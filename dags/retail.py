@@ -23,6 +23,10 @@ def check_transform(scan_name='check_transform', checks_subpath='transform'):
 
     return check(scan_name, checks_subpath)
 
+def check_report(scan_name='check_report', checks_subpath='report'):
+    from include.soda.check_function import check
+    return check(scan_name, checks_subpath)
+
 @dag(
     start_date=datetime(2023, 1, 1),
     schedule=None,
@@ -90,4 +94,10 @@ def retail():
             select=['path:models/report']
         )
     )
+    
+    check_report_task = PythonOperator(
+        task_id='check_report',
+        python_callable=check_report,
+    )
+    
 retail()
