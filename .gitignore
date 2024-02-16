@@ -15,3 +15,8 @@ tests/
 include/gcp/
 .astro/
 *.airflowignore
+include/dbt/target
+include/dbt/.user.yml
+include/dbt/dbt_packages
+include/dbt/logs
+
