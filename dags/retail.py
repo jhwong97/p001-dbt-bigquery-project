@@ -18,6 +18,11 @@ def check_load(scan_name='check_load', checks_subpath='sources'):
     from include.soda.check_function import check
     return check(scan_name, checks_subpath)
 
+def check_transform(scan_name='check_transform', checks_subpath='transform'):
+    from include.soda.check_function import check
+
+    return check(scan_name, checks_subpath)
+
 @dag(
     start_date=datetime(2023, 1, 1),
     schedule=None,
@@ -69,6 +74,11 @@ def retail():
             load_method=LoadMode.DBT_LS,
             select=['path:models/transforms']
         )
+    )
+    
+    check_transform_task = PythonOperator(
+        task_id='check_transform',
+        python_callable=check_transform,
     )
     
 retail()
