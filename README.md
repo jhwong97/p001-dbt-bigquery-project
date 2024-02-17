@@ -39,7 +39,7 @@ Special notes:
 ```
 df.to_csv(filepath,encoding='UTF-8', encoding_errors='replace')
 ```
-### Initiating the Apache Airflow
+### Initiating the Basic Structure of Apache Airflow
 With the installation of Astro CLI, run the below command to set up the basic structure of the project which included the essential files and directories needed to get started with **Airflow development**.
 ```
 astro dev init
@@ -63,3 +63,30 @@ After initiating the files and directories, the directory structure will be as b
         └── test_dag_example.py
 ```
 **Astro** helps in simplifying the data pipeline development, making it easier to work with **Airflow**.
+
+### Configuring the Apache Airflow
+The configurations for the Apache Airflow are as below:
+- Configure the **Dockerfile** following [this](/Dockerfile).
+- Configure the **requirements.txt** following [this](/requirements.txt).
+- Configure the **.env** file by adding following lines:
+```
+AIRFLOW__CORE__TEST_CONNECTION=enabled
+PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=pytho
+```
+- Create a GCS bucket with a unique name `<bucket_name>` on GC.
+- Create a service account with a unique name `<service_account_name>` with Storage Admin and BigQuery Admin permissions.
+- Generate a new credential key of that service account and save the JSON content in `include/gcp/` directory.
+- Run the following command to build your Astro project into a Docker image and spin up a local Docker container for each Airflow component.
+```
+astro dev start
+```
+
+### Setting Up Connections between Airflow and GCP
+The steps to set up the connections between **Airflow** and **GCP** are:
+- Connect to the `http://localhost:8080/` to access the Airflow Web UI.
+- Create a new connection from the `Admin → Connections` tab as shown in the images below:
+![alt text](images/image_01.png)
+- Add the details of the new connection as shown below:
+![alt text](images/image_02.png)
+    where the `Keypath Path` should be replaced with your own path to your service account credential key.
+
