@@ -157,7 +157,7 @@ create_retail_dataset = BigQueryCreateEmptyDatasetOperator(
     )
 ```
 
-#### Task 3: Perform data quality check
+#### Task 3: Performing data quality check
 The following procedures are needed to perform the data quality check on the ingested data.
 - Create the following directories:
     - `include/soda`
@@ -550,4 +550,78 @@ transform = DbtTaskGroup(
             load_method=LoadMode.DBT_LS,
             select=['path:models/transforms']
         )
+    )
+```
+#### Task 5: Performing Data Quality Check
+The following procedures are needed to perform the data quality check on the transformed data.
+
+- Create the following directories:
+    - `include/soda/checks/transforms`
+- Create a `dim_customer.yml` refer to [this](include/soda/checks/transform/dim_customer.yml) in `include/soda/checks/transforms`.
+- Create a `dim_datetime.yml` refer to [this](include/soda/checks/transform/dim_datetime.yml) in `include/soda/checks/transforms`.
+- Create a `dim_product.yml` refer to [this](include/soda/checks/transform/dim_product.yml) in `include/soda/checks/transforms`.
+- Create a `fct_invoices.yml` refer to [this](include/soda/checks/transform/fct_invoices.yml) in `include/soda/checks/transforms`.
+- Add the following codes to create a task to perform data quality checking on transformed data.
+```python
+# Add this part before the dag block
+def check_load(scan_name='check_transform', checks_subpath='transform'):
+    from include.soda.check_function import check
+    return check(scan_name, checks_subpath)
+```
+```python
+# Add this part within the dag block
+check_transform_task = PythonOperator(
+        task_id='check_transform',
+        python_callable=check_transform,
+    )
+```
+#### Task 6: Using dbt to Query Data
+The following steps are needed to perform the data transformation using dbt:
+- Create the following directory:
+    - `include/dbt/models/report`
+- Create a `report_customer_invoices.sql` refer to [this](include/dbt/models/report/report_customer_invoices.sql) in `include/dbt/models/report`.
+- Create a `report_product_invoices.sql` refer to [this](include/dbt/models/report/report_product_invoices.sql) in `include/dbt/models/report`.
+- Create a `report_year_invoices.sql` refer to [this](include/dbt/models/report/report_year_invoices.sql) in `include/dbt/models/report`.
+- Test run the dbt models by executing the below commands:
+```bash
+astro dev bash
+cd include/dbt
+source dbt_venv/bin/activate
+cd include/dbt 
+dbt run --select path:models/report --profiles-dir /usr/local/airflow/include/dbt/
+```
+- Add the following codes to create a task in the `retail.py` to perform the data transformation.
+```python
+report = DbtTaskGroup(
+        group_id='report',
+        project_config=DBT_PROJECT_CONFIG,
+        profile_config=DBT_CONFIG,
+        render_config=RenderConfig(
+            load_method=LoadMode.DBT_LS,
+            select=['path:models/report']
+        )
+    )
+```
+
+#### Task 7: Performing Data Quality Check
+The following procedures are needed to perform the data quality check on the queried data.
+
+- Create the following directory:
+    - `include/soda/checks/report`
+- Create a `report_customer_invoices.yml` refer to [this](include/soda/checks/report/report_customer_invoices.yml) in `include/soda/checks/report`.
+- Create a `report_product_invoices.yml` refer to [this](include/soda/checks/report/report_product_invoices.yml) in `include/soda/checks/report`.
+- Create a `report_year_invoices.yml` refer to [this](include/soda/checks/report/report_year_invoices.yml) in `include/soda/checks/report`.
+- Add the following codes to create a task to perform data quality checking on transformed data.
+```python
+# Add this part before the dag block
+def check_load(scan_name='check_report', checks_subpath='report'):
+    from include.soda.check_function import check
+    return check(scan_name, checks_subpath)
+```
+```python
+# Add this part within the dag block
+check_transform_task = PythonOperator(
+        task_id='check_report',
+        python_callable=check_transform,
+    )
 ```
