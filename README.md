@@ -625,3 +625,19 @@ check_transform_task = PythonOperator(
         python_callable=check_transform,
     )
 ```
+
+### Testing an Airflow Task
+- To conduct test on a specific Airflow task, run the following commands:
+```bash
+astro dev bash
+airflow tasks test <dag_name> <task_name> <execution_date>
+```
+Make sure to repace `<dag_name>`, `<task_name>`, and `<execution_date>` with your own values. 
+
+- To test run the dbt tasks, additional details on the `<task_name>` are required as shown below:
+```bash
+astro dev bash
+airflow tasks list retail
+airflow tasks test retail transform.dim_customer.dim_customer_run 2023-01-01
+airflow tasks test retail transform.dim_customer.dim_customer_test 2023-01-01
+```
