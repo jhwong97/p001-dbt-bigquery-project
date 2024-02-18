@@ -91,7 +91,7 @@ The steps to set up the connections between **Airflow** and **GCP** are:
     where the `Keypath Path` should be replaced with your own path to your service account credential key.
 
 ### Creating an Airflow DAG
-Create a python script - [retail.py](dags/retail.py) for the Airflow DAG which contain all the necessary tasks for **ingesting data**,**checking data quality**, and **transforming data**.
+Create a python script - [retail.py](dags/retail.py) in `dags` directory, which contain all the necessary tasks for **ingesting data**,**checking data quality**, and **transforming data**.
 
 The following libraries and functions should be included in the created python script, ensuring the tasks can be executed without errors.
 ```python
@@ -163,7 +163,7 @@ The following procedures are needed to perform the data quality check on the ing
     - `include/soda`
     - `include/soda/checks/`
     - `include/soda/checks/sources/`
-- Create a `configuration.yml` file with the following details:
+- Create a `configuration.yml` file refer with the following details in `include/soda`:
 ```yml
 data_source retail:
   type: bigquery
@@ -189,7 +189,7 @@ astro dev bash
 soda test-connection -d retail -c include/soda/configuration.yml
 ```
 - Create a [raw_invoices.yml](include/soda/checks/sources/raw_invoices.yml) in the `include/soda/checks/sources/` direcotry. 
-- Create a [check_function.py](include/soda/check_function.py) in `include/soda`. The same function is reusable in later stage for checking data quality on transformed data.
+- Create a [check_function.py](include/soda/check_function.py) in `include/soda` directory. The same function is reusable in later stage for checking data quality on transformed data.
 ```python
 # include/soda/check_function.py
 def check(scan_name, checks_subpath=None, data_source='retail', project_root='include'):
