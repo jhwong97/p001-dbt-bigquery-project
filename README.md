@@ -2,7 +2,7 @@
 ## Introduction
 This personal project is a replication of work from this [Data Engineer Project](https://www.youtube.com/watch?v=DzxtCxi4YaA) with some minor tweaks. It provides good hands-on experiences for the following parts:
 - To create a complete ELT data pipeline using Airflow to perform data analysis work.
-- To utilise Astro CLI in setting up the Airflow local environment.
+- To utilize Astro CLI in setting up the Airflow local environment.
 - To perform data quality check on data extraction and transformation parts via SODA.
 - To integrate dbt into the data pipeline as to automate the data transformation and loading it into data warehouse.
 - To upload data to GCS and ingesting the data into BigQuery table using the Astro SDK.
@@ -71,7 +71,7 @@ The configurations for the Apache Airflow are as below:
 - Configure the **.env** file by adding following lines:
 ```
 AIRFLOW__CORE__TEST_CONNECTION=enabled
-PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=pytho
+PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 ```
 - Create a GCS bucket with a unique name `<bucket_name>` on GC.
 - Create a service account with a unique name `<service_account_name>` with Storage Admin and BigQuery Admin permissions.
